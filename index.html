@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Movie Finder</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Teko:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Brian's Movie Finder</h1>
+
+    <input id="textId" type="text" placeholder="Interstellar" oninput="setMovieName(event)" size="30">
+    <button onclick="findMovie()">Find Movie</button>
+
+    <div id="movieInfo">
+
+        
+
+    </div>
+    
+</body>
+<script>
+    let movie = {};
+
+    let movieName = "";
+    function setMovieName(event = new Event()){
+        movieName = event.target.value;
+    }
+
+    async function findMovie(){
+        const httpResponse = await fetch("https://imdb-api.com/en/API/SearchMovie/k_yo8d3bf2/"+ movieName);
+
+        //error handling
+        if(httpResponse.status === 404){
+            alert(`No movie with name ${movieName} found`);
+            return;
+        }
+
+        const body = await httpResponse.json();
+        movie = body;
+        console.log(movie);
+        renderMovieInfo();
+    }
+
+    async function renderMovieInfo(){
+        const title = movie.results[0].title;
+        const description = movie.results[0].description;
+        const imageLink = movie.results[0].image;
+        const id = movie.results[0].id;
+
+        // const httpResponse = await fetch("https://imdb-api.com/en/API/Trailer/k_yo8d3bf2/"+ id);
+        // const body = await httpResponse.json();
+
+        // console.log(body);
+
+        // const videoLink = body.linkEmbed;
+
+        const movieInfoDiv = document.getElementById("movieInfo");
+
+        // name heading
+        const titleHeading = document.createElement("h3");
+        titleHeading.innerText = title;
+
+        //stats heading
+        const descHeading = document.createElement("h4");
+        descHeading.innerText = description;// string interpolation syntax
+
+        // image
+        const movieImage = document.createElement("img");
+        movieImage.src = imageLink;
+
+        // const movieVideo = document.createElement("iframe");
+        // movieVideo.src = videoLink;
+        // console.log(videoLink);
+        // console.log(imageLink);
+
+
+        //clear out html in the div
+        movieInfoDiv.innerHTML = "";
+
+        //Append all my new elements to the dive
+        movieInfoDiv.appendChild(titleHeading);
+        movieInfoDiv.appendChild(descHeading);
+        movieInfoDiv.appendChild(movieImage);
+        //movieInfoDiv.appendChild(movieVideo);
+    }
+
+
+</script>
+</html>
